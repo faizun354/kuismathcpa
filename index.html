@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2457c5">
+<title>Kuis Pola Matematika Kelas 4 — CPA</title>
+<style>
+:root{--blue:#2457c5;--pale:#eef4ff;--ink:#182238;--muted:#63708a;--line:#dce3ef;--green:#16794b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fc;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+main{max-width:760px;margin:auto;padding:16px}
+.hero{background:linear-gradient(135deg,#2457c5,#704bd1);color:#fff;padding:25px 20px;border-radius:22px;text-align:center;box-shadow:0 8px 24px #1c36751c}
+.hero .emoji{font-size:2.5rem}.hero h1{font-size:1.65rem;line-height:1.2;margin:8px 0}.hero p{margin:8px 0 0;color:#eef2ff}
+.panel,.question,.result{background:white;border:1px solid var(--line);border-radius:16px;padding:17px;margin-top:14px}
+label{font-weight:700;display:block;margin-bottom:6px}input[type=text]{width:100%;padding:12px;border:1px solid #b8c5d9;border-radius:10px;font:inherit}
+.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stage{padding:10px 5px;border-radius:12px;background:#f1f5fb;text-align:center;font-size:.88rem}.stage b{display:block;font-size:1rem}
+.progress-wrap{margin-top:14px}.progress-text{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}.bar{height:8px;background:#e6ebf4;border-radius:99px;overflow:hidden;margin-top:6px}.bar div{height:100%;width:0;background:var(--blue);transition:width .2s}
+.qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.pill{background:var(--pale);color:var(--blue);font-size:.8rem;font-weight:700;padding:4px 9px;border-radius:99px}.question h2{font-size:1.08rem;margin:7px 0 14px}.visual{font-size:1.7rem;letter-spacing:3px;text-align:center;background:#f8faff;padding:14px;border-radius:12px;margin:10px 0}
+.options{display:grid;gap:8px}.option{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:11px;padding:11px;cursor:pointer}.option:has(input:checked){border-color:var(--blue);background:#f1f5ff}.option input{accent-color:var(--blue);width:18px;height:18px;flex-shrink:0}
+button{border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff;width:100%;margin-top:14px}.secondary{background:#edf1f8;color:var(--ink)}button:disabled{opacity:.45;cursor:not-allowed}.feedback{padding:10px 12px;border-radius:10px;margin-top:12px;font-size:.93rem}.correct{background:#e9f8ef;color:#125b37}.incorrect{background:#fff0ee;color:#8f1d16}.hidden{display:none!important}.result{text-align:center}.score{font-size:2.5rem;font-weight:850;color:var(--blue)}.review{text-align:left;border-top:1px solid var(--line);padding:12px 0}.review h3{font-size:1rem;margin:0 0 5px}.small{font-size:.9rem;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:22px 0}
+@media(min-width:600px){main{padding:24px}.hero{padding:32px}.hero h1{font-size:2rem}.question,.panel,.result{padding:22px}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<div class="emoji">🔢 🎨 🧩</div>
+<h1>Kuis Pola Matematika</h1>
+<p>Kelas 4 SD · Belajar dengan metode CPA</p>
+<p>15 soal interaktif · Skor otomatis · Bisa dibuka lewat HP</p>
+</header>
+<section class="panel" id="intro">
+<label for="student">Nama siswa</label>
+<input id="student" type="text" placeholder="Tuliskan nama lengkap" autocomplete="name">
+<div class="stages">
+<div class="stage">🧱 <b>Konkret</b>5 soal</div>
+<div class="stage">🖼️ <b>Pictorial</b>5 soal</div>
+<div class="stage">🔢 <b>Abstrak</b>5 soal</div>
+</div>
+<p class="small">Petunjuk: Pilih satu jawaban terbaik pada setiap soal. Tekan “Periksa jawaban” untuk melihat hasil dan pembahasan.</p>
+<button class="primary" id="start">Mulai kuis</button>
+</section>
+<section id="quiz" class="hidden">
+<div class="progress-wrap"><div class="progress-text"><span id="progressLabel">Soal 1 dari 15</span><span id="answeredLabel">0 dijawab</span></div><div class="bar"><div id="progressBar"></div></div></div>
+<div id="questionArea"></div>
+<button class="primary" id="next" disabled>Soal berikutnya →</button>
+<button class="secondary" id="back" style="width:100%;margin-top:8px">← Soal sebelumnya</button>
+</section>
+<section id="result" class="result hidden"></section>
+<footer>Belajar pola itu menyenangkan. Amati, temukan aturan, lalu jelaskan alasanmu! 🌟</footer>
+</main>
+<script>
+const questions = [
+{stage:"Konkret",title:"Bayangkan kamu menyusun tutup botol dengan pola berikut. Warna apa yang harus diletakkan berikutnya?",visual:"🔴 🔵 🔴 🔵 🔴  ?",opts:["Merah 🔴","Biru 🔵","Kuning 🟡","Hijau 🟢"],a:1,why:"Warna merah dan biru bergantian. Setelah merah, berikutnya biru."},
+{stage:"Konkret",title:"Kelompok pertama berisi 2 balok, kelompok kedua 4 balok, dan kelompok ketiga 6 balok. Berapa balok pada kelompok keempat?",visual:"🧱🧱  →  🧱🧱🧱🧱  →  6 balok  →  ?",opts:["7 balok","8 balok","9 balok","10 balok"],a:1,why:"Jumlah balok bertambah 2 setiap kelompok: 2, 4, 6, 8."},
+{stage:"Konkret",title:"Ikuti pola gerakan: tepuk – tepuk – hentak kaki – tepuk – tepuk – hentak kaki. Gerakan berikutnya adalah ...",visual:"👏 👏 👣   👏 👏 👣   ?",opts:["Hentak kaki 👣","Melompat 🦘","Tepuk tangan 👏","Duduk 🪑"],a:2,why:"Pola tiga gerakan berulang. Setelah hentak kaki, pola kembali ke tepuk tangan."},
+{stage:"Konkret",title:"Kamu membuat kelompok stik: 1 stik, lalu 3 stik, lalu 5 stik. Berapa stik pada kelompok berikutnya?",visual:"🪵  →  🪵🪵🪵  →  🪵🪵🪵🪵🪵  →  ?",opts:["6 stik","7 stik","8 stik","9 stik"],a:1,why:"Jumlah stik bertambah 2: 1, 3, 5, 7."},
+{stage:"Konkret",title:"Susun benda dengan pola: kancing merah, merah, biru; lalu ulangi. Benda berikutnya setelah merah, merah, biru, merah, merah adalah ...",visual:"🔴 🔴 🔵 🔴 🔴  ?",opts:["Merah 🔴","Biru 🔵","Kuning 🟡","Hijau 🟢"],a:1,why:"Pola berulang terdiri dari dua merah dan satu biru."},
+{stage:"Pictorial",title:"Perhatikan pola gambar. Bentuk apa yang tepat untuk mengisi tanda tanya?",visual:"○  △  ○  △  ○  ?",opts:["Lingkaran ○","Segitiga △","Persegi □","Bintang ☆"],a:1,why:"Lingkaran dan segitiga bergantian. Setelah lingkaran, berikutnya segitiga."},
+{stage:"Pictorial",title:"Gambar apakah yang muncul berikutnya?",visual:"⭐ ⭐ 🌙 ⭐ ⭐ 🌙 ⭐ ⭐  ?",opts:["Bintang ⭐","Bulan 🌙","Matahari ☀️","Awan ☁️"],a:1,why:"Pola terdiri dari dua bintang, lalu satu bulan."},
+{stage:"Pictorial",title:"Pola 1 memiliki 2 lingkaran, pola 2 memiliki 4, dan pola 3 memiliki 6. Berapa lingkaran pada pola 5?",visual:"Pola 1: ●●<br>Pola 2: ●●●●<br>Pola 3: ●●●●●●",opts:["8 lingkaran","10 lingkaran","12 lingkaran","14 lingkaran"],a:1,why:"Setiap pola bertambah 2 lingkaran. Pola 4 berisi 8 dan pola 5 berisi 10."},
+{stage:"Pictorial",title:"Pola gambar bertambah satu persegi pada setiap langkah. Pola 1 berisi 1 persegi, pola 2 berisi 2 persegi, pola 3 berisi 3 persegi. Pola 5 berisi ...",visual:"Pola 1: ■<br>Pola 2: ■ ■<br>Pola 3: ■ ■ ■",opts:["3 persegi","4 persegi","5 persegi","6 persegi"],a:2,why:"Setiap pola bertambah satu persegi. Pola ke-5 berisi 5 persegi."},
+{stage:"Pictorial",title:"Amati urutan bentuk berikut. Bentuk yang tepat untuk dua tempat berikutnya adalah ...",visual:"▲ ■ ● ▲ ■ ● ▲  ?  ?",opts:["▲ lalu ■","■ lalu ●","● lalu ▲","■ lalu ▲"],a:1,why:"Pola berulang segitiga, persegi, lingkaran. Setelah segitiga, persegi lalu lingkaran."},
+{stage:"Abstrak",title:"Tentukan dua angka berikutnya: 2, 4, 6, 8, ..., ...",visual:"2, 4, 6, 8, __, __",opts:["9 dan 10","10 dan 12","11 dan 13","12 dan 14"],a:1,why:"Setiap angka bertambah 2. Angka berikutnya adalah 10 dan 12."},
+{stage:"Abstrak",title:"Angka berikutnya dari pola 5, 10, 15, 20, ... adalah ...",visual:"5, 10, 15, 20, __",opts:["21","24","25","30"],a:2,why:"Setiap angka bertambah 5, sehingga 20 + 5 = 25."},
+{stage:"Abstrak",title:"Tentukan angka berikutnya: 30, 27, 24, 21, ...",visual:"30, 27, 24, 21, __",opts:["20","19","18","17"],a:2,why:"Setiap angka berkurang 3, sehingga 21 − 3 = 18."},
+{stage:"Abstrak",title:"Perhatikan pola: 3, 6, 12, 24, ... Angka berikutnya adalah ...",visual:"3, 6, 12, 24, __",opts:["27","36","48","30"],a:2,why:"Setiap angka dikalikan 2. Jadi 24 × 2 = 48."},
+{stage:"Abstrak",title:"Pola bilangan: 4, 7, 11, 16, 22, ... Dua angka berikutnya adalah ...",visual:"4 → 7 → 11 → 16 → 22 → __ → __",opts:["27 dan 32","28 dan 35","29 dan 37","30 dan 38"],a:2,why:"Selisihnya +3, +4, +5, +6, lalu +7 dan +8. Jadi angka berikutnya 29 dan 37."}
+];
+let current=0,answers=Array(questions.length).fill(null),locked=false;
+const $=id=>document.getElementById(id);
+function render(){
+ const q=questions[current];
+ $("progressLabel").textContent=`Soal ${current+1} dari ${questions.length} · ${q.stage}`;
+ $("answeredLabel").textContent=`${answers.filter(v=>v!==null).length} dijawab`;
+ $("progressBar").style.width=`${(current+1)/questions.length*100}%`;
+ $("questionArea").innerHTML=`<article class="question"><div class="qhead"><span class="pill">Soal ${current+1}</span><span class="pill">${q.stage}</span></div><h2>${q.title}</h2><div class="visual">${q.visual}</div><div class="options">${q.opts.map((o,i)=>`<label class="option"><input type="radio" name="answer" value="${i}" ${answers[current]===i?"checked":""}><span>${String.fromCharCode(65+i)}. ${o}</span></label>`).join("")}</div></article>`;
+ document.querySelectorAll('input[name="answer"]').forEach(el=>el.addEventListener("change",e=>{answers[current]=Number(e.target.value);$("next").disabled=false;$("answeredLabel").textContent=`${answers.filter(v=>v!==null).length} dijawab`; }));
+ $("next").disabled=answers[current]===null;
+ $("next").textContent=current===questions.length-1?"Periksa jawaban ✓":"Soal berikutnya →";
+ $("back").disabled=current===0;
+}
+$("start").addEventListener("click",()=>{if(!$("student").value.trim()){alert("Silakan isi nama siswa terlebih dahulu.");$("student").focus();return;}$("intro").classList.add("hidden");$("quiz").classList.remove("hidden");render();window.scrollTo({top:0,behavior:"smooth"});});
+$("next").addEventListener("click",()=>{if(answers[current]===null)return;if(current<questions.length-1){current++;render();window.scrollTo({top:0,behavior:"smooth"});}else showResult();});
+$("back").addEventListener("click",()=>{if(current>0){current--;render();window.scrollTo({top:0,behavior:"smooth"});}});
+function showResult(){
+ const score=questions.reduce((n,q,i)=>n+(answers[i]===q.a?1:0),0),pct=Math.round(score/questions.length*100);
+ $("quiz").classList.add("hidden");$("result").classList.remove("hidden");
+ $("result").innerHTML=`<div style="font-size:2.5rem">${pct>=80?"🏆":pct>=60?"🌟":"💪"}</div><h2>${pct>=80?"Hebat sekali!":pct>=60?"Bagus, terus berlatih!":"Tetap semangat belajar!"}</h2><p>${$("student").value.trim()}</p><div class="score">${score}/${questions.length}</div><p>Nilai: <b>${pct}/100</b></p><p class="small">Berikut hasil dan pembahasan jawabanmu.</p>${questions.map((q,i)=>`<div class="review"><h3>Soal ${i+1} · ${answers[i]===q.a?"✅ Benar":"❌ Belum tepat"}</h3><div>${q.title}</div><p class="small">Jawaban benar: <b>${String.fromCharCode(65+q.a)}. ${q.opts[q.a]}</b></p><p>${q.why}</p></div>`).join("")}<button class="primary" id="retry">Ulangi kuis</button><button class="secondary" id="copy" style="width:100%;margin-top:8px">Salin hasil untuk guru</button>`;
+ $("retry").addEventListener("click",()=>{current=0;answers=Array(questions.length).fill(null);$("result").classList.add("hidden");$("intro").classList.remove("hidden");$("student").value="";window.scrollTo({top:0,behavior:"smooth"});});
+ $("copy").addEventListener("click",async()=>{const txt=`HASIL KUIS POLA MATEMATIKA KELAS 4\nNama: ${$("student").value}\nSkor: ${score}/${questions.length}\nNilai: ${pct}/100\n`+questions.map((q,i)=>`Soal ${i+1}: ${answers[i]===q.a?"Benar":"Belum tepat"}; Jawaban benar: ${q.opts[q.a]}`).join("\n");try{await navigator.clipboard.writeText(txt);alert("Hasil kuis berhasil disalin.");}catch(e){prompt("Salin hasil kuis berikut:",txt);}});
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+</html>
